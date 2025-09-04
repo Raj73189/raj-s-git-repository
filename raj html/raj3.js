@@ -1,10 +1,17 @@
-// 3D Particle Animation for Background
-class ParticleAnimation {
+class SolarSystem {
     constructor() {
         this.canvas = document.getElementById('particleCanvas');
         this.ctx = this.canvas.getContext('2d');
-        this.particles = [];
-        this.mouse = { x: 0, y: 0, radius: 100 };
+        this.planets = [];
+        this.stars = [];
+        this.spaceDust = [];
+        this.nebulas = [];
+        this.sun = { 
+            x: this.canvas.width / 2, 
+            y: this.canvas.height / 2, 
+            radius: 60,
+            glowRadius: 120
+        };
         
         this.init();
         this.animate();
@@ -12,224 +19,246 @@ class ParticleAnimation {
     }
 
     init() {
-        // Set canvas size
         this.resizeCanvas();
-        
-        // Create particles
-        this.createParticles();
+        this.createStars();
+        this.createPlanets();
+        this.createSpaceDust();
+        this.createNebulas();
     }
 
     resizeCanvas() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        this.sun.x = this.canvas.width / 2;
+        this.sun.y = this.canvas.height / 2;
     }
 
-    createParticles() {
-        const particleCount = 150;
-        const colors = [
-            'rgba(102, 126, 234, 0.6)',
-            'rgba(118, 75, 162, 0.6)',
-            'rgba(255, 255, 255, 0.4)'
-        ];
-
-        for (let i = 0; i < particleCount; i++) {
-            this.particles.push({
+    createStars() {
+        this.stars = [];
+        const starCount = 500;
+        for (let i = 0; i < starCount; i++) {
+            this.stars.push({
                 x: Math.random() * this.canvas.width,
                 y: Math.random() * this.canvas.height,
-                size: Math.random() * 3 + 1,
-                speedX: Math.random() * 3 - 1.5,
-                speedY: Math.random() * 3 - 1.5,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                angle: Math.random() * Math.PI * 2,
-                waveAmplitude: Math.random() * 2 + 1
+                size: Math.random() * 2 + 0.5,
+                brightness: Math.random() * 0.8 + 0.2,
+                twinkleSpeed: Math.random() * 0.02 + 0.01,
+                twinkleOffset: Math.random() * Math.PI * 2
             });
         }
     }
 
-    drawParticles() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        // Draw connections between particles
-        this.drawConnections();
-        
-        // Draw individual particles
-        this.particles.forEach(particle => {
-            this.ctx.beginPath();
-            this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-            this.ctx.fillStyle = particle.color;
-            this.ctx.fill();
-            
-            // Add glow effect
-            this.ctx.shadowBlur = 15;
-            this.ctx.shadowColor = particle.color;
-        });
-
-        this.ctx.shadowBlur = 0;
-    }
-
-    drawConnections() {
-        for (let i = 0; i < this.particles.length; i++) {
-            for (let j = i + 1; j < this.particles.length; j++) {
-                const dx = this.particles[i].x - this.particles[j].x;
-                const dy = this.particles[i].y - this.particles[j].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < 100) {
-                    const opacity = 1 - distance / 100;
-                    this.ctx.beginPath();
-                    this.ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.2})`;
-                    this.ctx.lineWidth = 0.5;
-                    this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
-                    this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
-                    this.ctx.stroke();
-                }
-            }
+    createSpaceDust() {
+        this.spaceDust = [];
+        const dustCount = 100;
+        for (let i = 0; i < dustCount; i++) {
+            this.spaceDust.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                size: Math.random() * 1 + 0.3,
+                speed: Math.random() * 0.2 + 0.1,
+                angle: Math.random() * Math.PI * 2
+            });
         }
     }
 
-    updateParticles() {
-        this.particles.forEach(particle => {
-            // Add wave motion
-            particle.angle += 0.02;
-            particle.x += Math.sin(particle.angle) * particle.waveAmplitude * 0.3;
-            particle.y += Math.cos(particle.angle) * particle.waveAmplitude * 0.3;
+    createNebulas() {
+        this.nebulas = [];
+        const nebulaCount = 3;
+        for (let i = 0; i < nebulaCount; i++) {
+            this.nebulas.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                radius: Math.random() * 200 + 100,
+                color: `rgba(${Math.random() * 100 + 100}, ${Math.random() * 100 + 50}, ${Math.random() * 200 + 50}, 0.1)`,
+                pulseSpeed: Math.random() * 0.01 + 0.005,
+                pulseOffset: Math.random() * Math.PI * 2
+            });
+        }
+    }
 
-            // Mouse interaction
-            const dx = particle.x - this.mouse.x;
-            const dy = particle.y - this.mouse.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+    createPlanets() {
+        const planetData = [
+            { name: 'Mercury', distance: 80, size: 6, color: '#8C8C8C', speed: 0.12, texture: true },
+            { name: 'Venus', distance: 120, size: 12, color: '#E6E6B8', speed: 0.09, texture: true },
+            { name: 'Earth', distance: 160, size: 12, color: '#4B92D4', speed: 0.07, texture: true, hasClouds: true },
+            { name: 'Mars', distance: 200, size: 10, color: '#C1440E', speed: 0.06, texture: true },
+            { name: 'Jupiter', distance: 260, size: 25, color: '#D8CA9D', speed: 0.04, texture: true, hasBands: true },
+            { name: 'Saturn', distance: 320, size: 22, color: '#E3D8B0', speed: 0.03, texture: true, hasRings: true, ringSize: 35 },
+            { name: 'Uranus', distance: 380, size: 18, color: '#ACE5EE', speed: 0.02, texture: true },
+            { name: 'Neptune', distance: 440, size: 18, color: '#3454D1', speed: 0.015, texture: true }
+        ];
+
+        planetData.forEach(data => {
+            this.planets.push({ 
+                ...data, 
+                angle: Math.random() * Math.PI * 2,
+                rotation: Math.random() * Math.PI * 2,
+                rotationSpeed: Math.random() * 0.02 + 0.01
+            });
+        });
+    }
+
+    drawStars() {
+        this.stars.forEach(star => {
+            const brightness = star.brightness + Math.sin(Date.now() * star.twinkleSpeed + star.twinkleOffset) * 0.3;
+            this.ctx.globalAlpha = Math.max(0, brightness);
+            this.ctx.fillStyle = 'white';
+            this.ctx.beginPath();
+            this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+            this.ctx.fill();
+        });
+        this.ctx.globalAlpha = 1;
+    }
+
+    drawSpaceDust() {
+        this.spaceDust.forEach(dust => {
+            dust.x += Math.cos(dust.angle) * dust.speed;
+            dust.y += Math.sin(dust.angle) * dust.speed;
             
-            if (distance < this.mouse.radius) {
-                const angle = Math.atan2(dy, dx);
-                const force = (this.mouse.radius - distance) / this.mouse.radius;
-                particle.x += Math.cos(angle) * force * 5;
-                particle.y += Math.sin(angle) * force * 5;
-            }
+            if (dust.x < 0) dust.x = this.canvas.width;
+            if (dust.x > this.canvas.width) dust.x = 0;
+            if (dust.y < 0) dust.y = this.canvas.height;
+            if (dust.y > this.canvas.height) dust.y = 0;
 
-            // Bounce off walls with 3D perspective effect
-            if (particle.x < 0 || particle.x > this.canvas.width) {
-                particle.speedX = -particle.speedX;
-                particle.x = particle.x < 0 ? 0 : this.canvas.width;
-            }
-            if (particle.y < 0 || particle.y > this.canvas.height) {
-                particle.speedY = -particle.speedY;
-                particle.y = particle.y < 0 ? 0 : this.canvas.height;
-            }
+            this.ctx.globalAlpha = 0.3;
+            this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            this.ctx.beginPath();
+            this.ctx.arc(dust.x, dust.y, dust.size, 0, Math.PI * 2);
+            this.ctx.fill();
+        });
+        this.ctx.globalAlpha = 1;
+    }
 
-            // Move particles
-            particle.x += particle.speedX;
-            particle.y += particle.speedY;
+    drawNebulas() {
+        this.nebulas.forEach(nebula => {
+            const pulse = Math.sin(Date.now() * nebula.pulseSpeed + nebula.pulseOffset) * 0.1 + 0.9;
+            const gradient = this.ctx.createRadialGradient(
+                nebula.x, nebula.y, 0,
+                nebula.x, nebula.y, nebula.radius * pulse
+            );
+            gradient.addColorStop(0, nebula.color);
+            gradient.addColorStop(1, 'transparent');
+
+            this.ctx.globalAlpha = 0.15;
+            this.ctx.fillStyle = gradient;
+            this.ctx.beginPath();
+            this.ctx.arc(nebula.x, nebula.y, nebula.radius * pulse, 0, Math.PI * 2);
+            this.ctx.fill();
+        });
+        this.ctx.globalAlpha = 1;
+    }
+
+    drawSun() {
+        // Sun glow
+        const gradient = this.ctx.createRadialGradient(
+            this.sun.x, this.sun.y, 0,
+            this.sun.x, this.sun.y, this.sun.glowRadius
+        );
+        gradient.addColorStop(0, 'rgba(255, 255, 200, 0.8)');
+        gradient.addColorStop(0.5, 'rgba(255, 200, 100, 0.4)');
+        gradient.addColorStop(1, 'rgba(255, 150, 50, 0)');
+
+        this.ctx.globalAlpha = 0.6;
+        this.ctx.fillStyle = gradient;
+        this.ctx.beginPath();
+        this.ctx.arc(this.sun.x, this.sun.y, this.sun.glowRadius, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // Sun core
+        this.ctx.globalAlpha = 1;
+        this.ctx.fillStyle = '#FFD700';
+        this.ctx.beginPath();
+        this.ctx.arc(this.sun.x, this.sun.y, this.sun.radius, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // Sun texture
+        this.ctx.fillStyle = '#FFA500';
+        for (let i = 0; i < 20; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * this.sun.radius * 0.8;
+            const size = Math.random() * 8 + 2;
+            const x = this.sun.x + Math.cos(angle) * distance;
+            const y = this.sun.y + Math.sin(angle) * distance;
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, size, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+    }
+
+    drawPlanet(planet) {
+        planet.angle += planet.speed;
+        planet.rotation += planet.rotationSpeed;
+        const x = this.sun.x + planet.distance * Math.cos(planet.angle);
+        const y = this.sun.y + planet.distance * Math.sin(planet.angle);
+
+        // Draw planet
+        this.ctx.fillStyle = planet.color;
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, planet.size, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // Draw planet texture
+        if (planet.texture) {
+            this.ctx.fillStyle = this.lightenColor(planet.color, 0.2);
+            for (let i = 0; i < 5; i++) {
+                const textureAngle = Math.random() * Math.PI * 2;
+                const textureDist = Math.random() * planet.size * 0.7;
+                const textureSize = Math.random() * planet.size * 0.3 + 1;
+                const tx = x + Math.cos(textureAngle + planet.rotation) * textureDist;
+                const ty = y + Math.sin(textureAngle + planet.rotation) * textureDist;
+                this.ctx.beginPath();
+                this.ctx.arc(tx, ty, textureSize, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
+        }
+
+        // Draw Saturn's rings
+        if (planet.hasRings) {
+            this.ctx.strokeStyle = '#D8C690';
+            this.ctx.lineWidth = 4;
+            this.ctx.beginPath();
+            this.ctx.ellipse(x, y, planet.ringSize, planet.ringSize * 0.3, planet.rotation, 0, Math.PI * 2);
+            this.ctx.stroke();
+        }
+    }
+
+    lightenColor(color, amount) {
+        const hex = color.replace('#', '');
+        const num = parseInt(hex, 16);
+        const r = Math.min(255, ((num >> 16) + amount * 255));
+        const g = Math.min(255, ((num >> 8 & 0x00FF) + amount * 255));
+        const b = Math.min(255, ((num & 0x0000FF) + amount * 255));
+        return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+    }
+
+    drawPlanets() {
+        this.planets.forEach(planet => {
+            this.drawPlanet(planet);
         });
     }
 
     animate() {
         requestAnimationFrame(this.animate.bind(this));
-        this.updateParticles();
-        this.drawParticles();
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.drawStars();
+        this.drawNebulas();
+        this.drawSpaceDust();
+        this.drawSun();
+        this.drawPlanets();
     }
 
     setupEventListeners() {
         window.addEventListener('resize', () => {
             this.resizeCanvas();
-        });
-
-        window.addEventListener('mousemove', (e) => {
-            this.mouse.x = e.clientX;
-            this.mouse.y = e.clientY;
-        });
-
-        // Touch events for mobile
-        window.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            this.mouse.x = e.touches[0].clientX;
-            this.mouse.y = e.touches[0].clientY;
+            this.createStars();
+            this.createSpaceDust();
+            this.createNebulas();
         });
     }
 }
 
-// Form animations and interactions
-class FormAnimations {
-    constructor() {
-        this.setupFormInteractions();
-    }
-
-    setupFormInteractions() {
-        const inputs = document.querySelectorAll('input');
-        const button = document.querySelector('.btn');
-        const form = document.querySelector('form');
-
-        inputs.forEach(input => {
-            input.addEventListener('focus', () => {
-                input.parentElement.style.transform = 'translateZ(20px)';
-                input.parentElement.style.borderBottomColor = 'rgba(255, 255, 255, 0.8)';
-            });
-
-            input.addEventListener('blur', () => {
-                input.parentElement.style.transform = 'translateZ(10px)';
-                input.parentElement.style.borderBottomColor = 'rgba(255, 255, 255, 0.2)';
-            });
-        });
-
-        button.addEventListener('mouseenter', () => {
-            button.style.transform = 'translateY(-5px) translateZ(20px)';
-        });
-
-        button.addEventListener('mouseleave', () => {
-            button.style.transform = 'translateY(0px) translateZ(15px)';
-        });
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.animateFormSubmission();
-        });
-    }
-
-    animateFormSubmission() {
-        const button = document.querySelector('.btn');
-        const inputs = document.querySelectorAll('input');
-        
-        // Button loading animation
-        button.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
-        button.querySelector('span').textContent = 'Logging in...';
-        
-        // Input field animations
-        inputs.forEach(input => {
-            input.style.transform = 'translateX(-10px)';
-            input.style.opacity = '0.7';
-        });
-
-        // Simulate login process
-        setTimeout(() => {
-            this.resetForm();
-            alert('Login successful! (This is a demo)');
-        }, 2000);
-    }
-
-    resetForm() {
-        const button = document.querySelector('.btn');
-        const inputs = document.querySelectorAll('input');
-        
-        button.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
-        button.querySelector('span').textContent = 'Login';
-        
-        inputs.forEach(input => {
-            input.style.transform = 'translateX(0px)';
-            input.style.opacity = '1';
-            input.value = '';
-        });
-    }
-}
-
-// Initialize everything when DOM is loaded
+// Initialize the solar system animation when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new ParticleAnimation();
-    new FormAnimations();
-    
-    // Add parallax effect to container
-    const container = document.querySelector('.container');
-    document.addEventListener('mousemove', (e) => {
-        const x = (e.clientX / window.innerWidth - 0.5) * 10;
-        const y = (e.clientY / window.innerHeight - 0.5) * 10;
-        container.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-    });
+    new SolarSystem();
 });

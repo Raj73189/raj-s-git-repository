@@ -14,72 +14,72 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #000428, #004e92, #000428);
     overflow: hidden;
     perspective: 1000px;
 }
 
-/* 3D Particle Background */
+/* 3D Space Background */
 #particleCanvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: -2;
 }
 
-/* Floating 3D Shapes */
+/* Floating shapes for additional depth */
 .floating-shapes {
     position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
     z-index: -1;
+    pointer-events: none;
 }
 
 .shape {
     position: absolute;
     border-radius: 50%;
-    background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
-    animation: float 6s ease-in-out infinite;
+    opacity: 0.1;
+    animation: float 20s infinite ease-in-out;
 }
 
 .shape-1 {
-    width: 120px;
-    height: 120px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, #ff6b6b, transparent 70%);
     top: 20%;
     left: 10%;
     animation-delay: 0s;
-    box-shadow: 0 0 50px rgba(102, 126, 234, 0.3);
 }
 
 .shape-2 {
-    width: 80px;
-    height: 80px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, #4ecdc4, transparent 70%);
     top: 60%;
     right: 15%;
-    animation-delay: 2s;
-    box-shadow: 0 0 40px rgba(118, 75, 162, 0.3);
+    animation-delay: -5s;
 }
 
 .shape-3 {
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, #45b7d1, transparent 70%);
     bottom: 20%;
     left: 20%;
-    animation-delay: 4s;
-    box-shadow: 0 0 30px rgba(255,255,255,0.2);
+    animation-delay: -10s;
 }
 
 @keyframes float {
     0%, 100% {
-        transform: translateY(0px) rotate(0deg) scale(1);
+        transform: translateY(0px) rotate(0deg);
     }
     50% {
-        transform: translateY(-20px) rotate(180deg) scale(1.1);
+        transform: translateY(-20px) rotate(180deg);
     }
 }
 
@@ -87,28 +87,37 @@ body {
 .container {
     position: relative;
     width: 400px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 20px;
     padding: 40px;
     box-shadow: 
-        0 25px 45px rgba(0, 0, 0, 0.1),
-        0 0 0 1000px rgba(255, 255, 255, 0.05);
+        0 25px 45px rgba(0, 0, 0, 0.2),
+        0 0 0 1000px rgba(255, 255, 255, 0.03);
     transform-style: preserve-3d;
     transform: rotateX(5deg);
-    transition: transform 0.5s ease;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+    z-index: 10;
 }
 
 .container:hover {
     transform: rotateX(0deg) translateY(-10px);
+    box-shadow: 
+        0 35px 55px rgba(0, 0, 0, 0.3),
+        0 0 0 1000px rgba(255, 255, 255, 0.04);
+}
+
+/* Form styling */
+.form-box {
+    width: 100%;
 }
 
 .form-box h1 {
-    font-size: 36px;
     text-align: center;
+    font-size: 2.5em;
+    color: #fff;
     margin-bottom: 30px;
-    color: white;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     position: relative;
 }
@@ -121,22 +130,19 @@ body {
     width: 100%;
     height: 100%;
     color: transparent;
-    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
     z-index: -1;
 }
 
-/* 3D Input Fields */
 .input-box {
     position: relative;
     margin: 30px 0;
     border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
-    transform-style: preserve-3d;
+    transition: border-color 0.3s ease;
 }
 
 .input-box:hover {
-    transform: translateZ(10px);
-    border-bottom-color: rgba(255, 255, 255, 0.5);
+    border-bottom-color: rgba(255, 255, 255, 0.4);
 }
 
 .input-box input {
@@ -145,13 +151,13 @@ body {
     background: transparent;
     border: none;
     outline: none;
-    font-size: 16px;
-    color: white;
+    font-size: 1em;
+    color: #fff;
     padding: 0 35px 0 5px;
 }
 
 .input-box input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .input-box i {
@@ -159,56 +165,49 @@ body {
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 20px;
-    color: rgba(255, 255, 255, 0.8);
-    transition: all 0.3s ease;
+    font-size: 1.2em;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s ease;
 }
 
 .input-box:hover i {
-    transform: translateY(-50%) translateZ(15px);
-    color: white;
+    color: #fff;
 }
 
-/* Forgot Link */
 .forgot-link {
     margin: -15px 0 15px;
     text-align: right;
 }
 
 .forgot-link a {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 14px;
-    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9em;
+    transition: color 0.3s ease;
 }
 
 .forgot-link a:hover {
-    color: white;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    color: #fff;
+    text-decoration: underline;
 }
 
-/* 3D Animated Button */
 .btn {
+    position: relative;
     width: 100%;
-    height: 45px;
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    height: 50px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
     border: none;
     outline: none;
-    border-radius: 10px;
+    border-radius: 25px;
     cursor: pointer;
-    font-size: 16px;
-    color: white;
+    font-size: 1.1em;
+    color: #fff;
     font-weight: 600;
-    position: relative;
     overflow: hidden;
-    transform-style: preserve-3d;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease;
 }
 
 .btn:hover {
-    transform: translateY(-5px) translateZ(15px);
-    box-shadow: 
-        0 15px 30px rgba(102, 126, 234, 0.4),
-        0 0 0 3px rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
 }
 
 .btn span {
@@ -219,35 +218,27 @@ body {
 .btn-wave {
     position: absolute;
     top: 0;
-    left: -100%;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s ease;
+    background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
+    border-radius: 25px;
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
 }
 
 .btn:hover .btn-wave {
-    left: 100%;
+    transform: translateX(0);
 }
 
-/* Focus Effects */
-.input-box input:focus {
-    color: white;
-}
-
-.input-box input:focus ~ i {
-    color: white;
-    transform: translateY(-50%) scale(1.2);
-}
-
-/* Responsive Design */
+/* Responsive design */
 @media (max-width: 480px) {
     .container {
         width: 90%;
-        padding: 30px 20px;
+        padding: 30px;
     }
     
     .form-box h1 {
-        font-size: 28px;
+        font-size: 2em;
     }
 }
